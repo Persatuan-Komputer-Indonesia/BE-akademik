@@ -1,0 +1,9 @@
+model Lesson {
+  id         String  @id @default(uuid())
+  nama       String
+  deskripsi  String?
+  jurusan_id String
+  url_file   String?
+
+  jurusan Jurusan @relation(fields: [jurusan_id], references: [id])
+}

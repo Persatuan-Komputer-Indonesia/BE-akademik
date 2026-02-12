@@ -1,0 +1,8 @@
+model Jurusan {
+  id           String   @id @default(uuid())
+  nama_jurusan String
+  deskripsi    String?
+
+  profiles Profile[]
+  lessons  Lesson[]
+}
