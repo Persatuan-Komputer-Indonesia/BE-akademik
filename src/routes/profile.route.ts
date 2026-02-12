@@ -10,4 +10,5 @@ router.post("/", validateCreateProfile, ProfileController.create);
 router.put("/:id", ProfileController.update);
 router.delete("/:id", ProfileController.delete);
 
+
 export default router;
