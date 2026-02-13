@@ -25,7 +25,7 @@ export default class ProfileController {
 
   static async create(req: Request, res: Response) {
     try {
-      const data = await service.create(req.body);
+      const data = await service.create(req.body, req.file);
       res.status(201).json(data);
     } catch (err: any) {
       res.status(400).json({ message: err.message });
@@ -34,12 +34,13 @@ export default class ProfileController {
 
   static async update(req: Request, res: Response) {
     try {
-      const data = await service.update(req.params.id as string, req.body);
+      const data = await service.update(req.params.id as string, req.body, req.file);
       res.json(data);
     } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
   }
+
 
   static async delete(req: Request, res: Response) {
     try {
