@@ -1,7 +1,9 @@
-// backend/src/index.ts
+//src/index.ts
+import "dotenv/config";
 import app from "./app";
 import os from 'os';
 import config from './utils/env';
+
 
 // Bind to configured HOST (default 0.0.0.0) so server is reachable from other devices when needed
 app.listen(config.PORT, config.HOST, () => {
