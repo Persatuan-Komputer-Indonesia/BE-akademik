@@ -7,4 +7,6 @@ model User {
   role       Role
 
   profile    Profile?
+  otps       OTP[]
+  deletedAt  DateTime?
 }
