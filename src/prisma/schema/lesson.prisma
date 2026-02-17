@@ -6,4 +6,5 @@ model Lesson {
   url_file   String?
 
   jurusan Jurusan @relation(fields: [jurusan_id], references: [id])
+  deletedAt DateTime?
 }
