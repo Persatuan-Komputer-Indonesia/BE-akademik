@@ -8,4 +8,5 @@ model Profile {
 
   user     User    @relation(fields: [user_id], references: [id])
   jurusan  Jurusan @relation(fields: [jurusan_id], references: [id])
+  deletedAt  DateTime?
 }
