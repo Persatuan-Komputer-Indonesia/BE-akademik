@@ -1,16 +1,6 @@
-import nodemailer from "nodemailer";
+import * as brevo from "@getbrevo/brevo";
 import { OTPRepository } from "../repository/otp.repository";
 import { generateOtpEmailTemplate } from "../utils/otp.template";
-
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
 
 const generateOTP = (length = 6) => {
   let otp = "";
@@ -21,6 +11,15 @@ const generateOTP = (length = 6) => {
 };
 
 export class OTPService {
+  private static apiInstance = (() => {
+    const instance = new brevo.TransactionalEmailsApi();
+    instance.setApiKey(
+      brevo.TransactionalEmailsApiApiKeys.apiKey,
+      process.env.BREVO_API_KEY as string
+    );
+    return instance;
+  })();
+
   static async send(userId: string, email: string, username: string) {
     const otp = generateOTP();
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 menit
@@ -33,12 +32,17 @@ export class OTPService {
       "Project Akademik"
     );
 
-    await transporter.sendMail({
-      from: '"Project Akademik" <no-reply@project.com>',
-      to: email,
-      subject: "Kode OTP Login",
-      html,
-    });
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
+
+    sendSmtpEmail.subject = "Kode OTP Login";
+    sendSmtpEmail.to = [{ email }];
+    sendSmtpEmail.sender = {
+      name: "Project Akademik",
+      email: "no-reply@project.com", // harus verified di Brevo
+    };
+    sendSmtpEmail.htmlContent = html;
+
+    await this.apiInstance.sendTransacEmail(sendSmtpEmail);
   }
 
   static async verify(userId: string, inputOtp: string) {

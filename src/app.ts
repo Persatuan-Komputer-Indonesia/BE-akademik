@@ -1,6 +1,7 @@
 import express, { type Application, type Request, type Response } from "express";
 import path from 'path'; // Tambahkan import ini
 import cors from 'cors';
+import otpRoutes from "./routes/otp.route";
 
 const app: Application = express();
 
@@ -17,5 +18,7 @@ app.get('/', (_req: Request, res: Response) => {
         status: "Active"
     });
 });
+
+app.use('/otp', otpRoutes);
 
 export default app;
