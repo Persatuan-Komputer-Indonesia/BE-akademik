@@ -1,7 +1,10 @@
 import express, { type Application, type Request, type Response } from "express";
 import path from 'path'; // Tambahkan import ini
 import cors from 'cors';
+import { errorHandler } from "./middleware/errorHandler";
+
 import otpRoutes from "./routes/otp.route";
+
 
 const app: Application = express();
 
@@ -21,4 +24,8 @@ app.get('/', (_req: Request, res: Response) => {
 
 app.use('/otp', otpRoutes);
 
+
+
+
+app.use(errorHandler);
 export default app;

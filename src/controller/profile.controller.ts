@@ -1,70 +1,45 @@
 import { Request, Response } from "express";
 import { ProfileService } from "../services/profile.service";
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../utils/errors";
 
-const getParam = (param: string | string[]) => Array.isArray(param) ? param[0] : param;
+const getParam = (param: string | string[]) =>
+  Array.isArray(param) ? param[0] : param;
 
-// CREATE Profile
-export const createProfile = async (req: Request, res: Response) => {
-  try {
-    const profile = await ProfileService.create(req.body);
-    res.status(201).json(profile);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+export const createProfile = asyncHandler(async (req: Request, res: Response) => {
+  const profile = await ProfileService.create(req.body);
+  res.status(201).json(profile);
+});
 
-// GET All Profiles
-export const getAllProfiles = async (_req: Request, res: Response) => {
-  try {
-    const profiles = await ProfileService.findAll();
-    res.json(profiles);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+export const getAllProfiles = asyncHandler(async (_req: Request, res: Response) => {
+  const profiles = await ProfileService.findAll();
+  res.json(profiles);
+});
 
-// GET Profile by ID
-export const getProfileById = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    const profile = await ProfileService.findById(id);
-    if (!profile) return res.status(404).json({ message: "Profile ga ketemu bre!" });
-    res.json(profile);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+export const getProfileById = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id);
+  const profile = await ProfileService.findById(id);
+  if (!profile) throw new AppError("Profile tidak ditemukan", 404);
 
-// GET Profile by User ID
-export const getProfileByUserId = async (req: Request, res: Response) => {
-  try {
-    const user_id = getParam(req.params.user_id);
-    const profile = await ProfileService.findByUserId(user_id);
-    if (!profile) return res.status(404).json({ message: "Profile ga ketemu bre!" });
-    res.json(profile);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+  res.json(profile);
+});
 
-// UPDATE Profile
-export const updateProfile = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    const profile = await ProfileService.update(id, req.body);
-    res.json(profile);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+export const getProfileByUserId = asyncHandler(async (req: Request, res: Response) => {
+  const user_id = getParam(req.params.user_id);
+  const profile = await ProfileService.findByUserId(user_id);
+  if (!profile) throw new AppError("Profile tidak ditemukan", 404);
 
-// DELETE Profile
-export const deleteProfile = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    await ProfileService.delete(id);
-    res.json({ message: "Profile berhasil dihapus bre!" });
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+  res.json(profile);
+});
+
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id);
+  const profile = await ProfileService.update(id, req.body);
+  res.json(profile);
+});
+
+export const deleteProfile = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id);
+  await ProfileService.delete(id);
+  res.json({ message: "Profile berhasil dihapus" });
+});
