@@ -7,4 +7,5 @@ model User {
   role       Role
 
   profile    Profile?
+  otps       OTP[]
 }
