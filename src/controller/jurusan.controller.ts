@@ -20,21 +20,21 @@ export const getAllJurusan = asyncHandler(async (_: Request, res: Response) => {
 });
 
 export const getJurusanById = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  const jurusan = await JurusanService.findById(id);
+  const id = getParam(req.params.id as any);
+  const jurusan = await JurusanService.findById(id as any);
   if (!jurusan) throw new AppError("Jurusan tidak ditemukan", 404);
 
   res.json(jurusan);
 });
 
 export const updateJurusan = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  const jurusan = await JurusanService.update(id, req.body);
+  const id = getParam(req.params.id as any);
+  const jurusan = await JurusanService.update(id as any, req.body);
   res.json(jurusan);
 });
 
 export const deleteJurusan = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  await JurusanService.delete(id);
+  const id = getParam(req.params.id as any);
+  await JurusanService.delete(id as any);
   res.json({ message: "Jurusan berhasil dihapus" });
 });
