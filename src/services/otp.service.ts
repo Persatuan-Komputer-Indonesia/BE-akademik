@@ -2,6 +2,8 @@ import * as brevo from "@getbrevo/brevo";
 import { OTPRepository } from "../repository/otp.repository";
 import { generateOtpEmailTemplate } from "../utils/otp.template";
 import { OtpType } from "../generated/prisma";
+import { UserRepository } from "../repository/user.repository";
+import bcrypt from "bcrypt";
 
 const generateOTP = (length = 6) => {
   let otp = "";
@@ -64,8 +66,6 @@ export class OTPService {
     };
     sendSmtpEmail.htmlContent = html;
     
-
-    await this.apiInstance.sendTransacEmail(sendSmtpEmail);
     const response = await this.apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log("BREVO RESPONSE:", response);
     console.log(process.env.BREVO_API_KEY)
@@ -95,4 +95,79 @@ export class OTPService {
 
     return payload;
   }
+  // =========================
+// FORGOT PASSWORD
+// =========================
+static async sendForgotPasswordOTP(email: string) {
+  const user = await UserRepository.findByEmail(email);
+  if (!user) throw new Error("Email tidak terdaftar");
+
+  const code = generateOTP();
+  const expired_at = new Date(Date.now() + 5 * 60 * 1000);
+
+  await OTPRepository.deleteByEmailAndType(
+    email,
+    OtpType.FORGOT_PASSWORD
+  );
+
+  await OTPRepository.create({
+    email,
+    code,
+    type: OtpType.FORGOT_PASSWORD,
+    expired_at,
+    user_id: user.id,
+  });
+
+  const html = generateOtpEmailTemplate(
+    user.username,
+    code,
+    "Reset Password"
+  );
+
+  const sendSmtpEmail = new brevo.SendSmtpEmail();
+  sendSmtpEmail.subject = "Kode OTP Reset Password";
+  sendSmtpEmail.to = [{ email }];
+  sendSmtpEmail.sender = {
+    name: "Project Akademik",
+    email: "justcall1313@gmail.com",
+  };
+  sendSmtpEmail.htmlContent = html;
+
+  await this.apiInstance.sendTransacEmail(sendSmtpEmail);
+}
+
+static async verifyForgotPasswordOTP(
+  email: string,
+  inputCode: string
+) {
+  const record = await OTPRepository.findValid(
+    email,
+    inputCode,
+    OtpType.FORGOT_PASSWORD
+  );
+
+  if (!record) throw new Error("OTP tidak valid");
+  if (record.expired_at < new Date())
+    throw new Error("OTP kadaluarsa");
+
+  return true;
+}
+static async resetPassword(
+  email: string,
+  newPassword: string
+) {
+  const user = await UserRepository.findByEmail(email);
+  if (!user) throw new Error("User tidak ditemukan");
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await UserRepository.update(user.id, {
+    password: hashed,
+  });
+
+  await OTPRepository.deleteByEmailAndType(
+    email,
+    OtpType.FORGOT_PASSWORD
+  );
+}
 }
