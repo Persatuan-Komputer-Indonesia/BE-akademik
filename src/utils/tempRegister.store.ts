@@ -1,3 +1,4 @@
+//src/utils/tempRegister.store.ts
 type TempRegisterData = {
   username: string;
   email: string;

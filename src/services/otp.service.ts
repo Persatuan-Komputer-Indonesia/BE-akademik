@@ -1,7 +1,7 @@
 import * as brevo from "@getbrevo/brevo";
 import { OTPRepository } from "../repository/otp.repository";
 import { generateOtpEmailTemplate } from "../utils/otp.template";
-import  prisma  from "../prisma";
+import { OtpType } from "../generated/prisma";
 
 const generateOTP = (length = 6) => {
   let otp = "";
@@ -21,88 +21,78 @@ export class OTPService {
     return instance;
   })();
 
-  static async send(userId: string, email: string, username: string) {
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 menit
+  // =========================
+  // REGISTER
+  // =========================
+  static async sendRegisterOTP(
+    email: string,
+    username: string,
+    password: string
+  ) {
+    const code = generateOTP();
+    const expired_at = new Date(Date.now() + 5 * 60 * 1000);
 
-    await OTPRepository.create(userId, otp, expiresAt);
+    // hapus OTP lama
+    await OTPRepository.deleteByEmailAndType(
+      email,
+      OtpType.REGISTER
+    );
+
+    await OTPRepository.create({
+      email,
+      code,
+      type: OtpType.REGISTER,
+      expired_at,
+      payload: {
+        username,
+        password,
+      },
+    });
 
     const html = generateOtpEmailTemplate(
       username,
-      otp,
+      code,
       "Project Akademik"
     );
 
     const sendSmtpEmail = new brevo.SendSmtpEmail();
-
-    sendSmtpEmail.subject = "Kode OTP Login";
+    sendSmtpEmail.subject = "Kode OTP Registrasi";
     sendSmtpEmail.to = [{ email }];
     sendSmtpEmail.sender = {
       name: "Project Akademik",
-      email: "no-reply@project.com", // harus verified di Brevo
+      email: "justcall1313@gmail.com",
     };
     sendSmtpEmail.htmlContent = html;
+    
 
     await this.apiInstance.sendTransacEmail(sendSmtpEmail);
+    const response = await this.apiInstance.sendTransacEmail(sendSmtpEmail);
+    console.log("BREVO RESPONSE:", response);
+    console.log(process.env.BREVO_API_KEY)
   }
 
-  static async verify(userId: string, inputOtp: string) {
-    const record = await OTPRepository.findValidOTP(userId, inputOtp);
+  static async verifyRegisterOTP(
+    email: string,
+    inputCode: string
+  ) {
+    const record = await OTPRepository.findValid(
+      email,
+      inputCode,
+      OtpType.REGISTER
+    );
 
-    if (!record) {
-      throw new Error("OTP tidak valid");
-    }
+    if (!record) throw new Error("OTP tidak valid");
 
-    if (record.expiresAt < new Date()) {
-      throw new Error("OTP sudah kadaluarsa");
-    }
+    if (record.expired_at < new Date())
+      throw new Error("OTP kadaluarsa");
+
+    const payload = record.payload as {
+      username: string;
+      password: string;
+    };
 
     await OTPRepository.deleteById(record.id);
-    return true;
+
+    return payload;
   }
-static async sendRegisterOTP(email: string, username: string) {
-  const otp = generateOTP();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
-
-  // simpan OTP TANPA userId dulu
-  await prisma.oTP.create({
-    data: {
-      otp,
-      expiresAt,
-      userId: "TEMP_REGISTER", // dummy
-    },
-  });
-
-  const html = generateOtpEmailTemplate(username, otp, "Project Akademik");
-
-  const sendSmtpEmail = new brevo.SendSmtpEmail();
-  sendSmtpEmail.subject = "Kode OTP Registrasi";
-  sendSmtpEmail.to = [{ email }];
-  sendSmtpEmail.sender = {
-    name: "Project Akademik",
-    email: "no-reply@project.com",
-  };
-  sendSmtpEmail.htmlContent = html;
-
-  await this.apiInstance.sendTransacEmail(sendSmtpEmail);
 }
-
-static async verifyRegisterOTP(email: string, inputOtp: string) {
-  const record = await prisma.oTP.findFirst({
-    where: {
-      otp: inputOtp,
-      userId: "TEMP_REGISTER",
-    },
-  });
-
-  if (!record) throw new Error("OTP tidak valid");
-  if (record.expiresAt < new Date())
-    throw new Error("OTP kadaluarsa");
-
-  await prisma.oTP.delete({ where: { id: record.id } });
-  return true;
-}
-
-
-}
-

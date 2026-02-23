@@ -16,19 +16,19 @@ export const getAllLessons = asyncHandler(async (_: Request, res: Response) => {
 });
 
 export const getLessonById = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  const lesson = await LessonService.getLessonById(id);
+  const id = getParam(req.params.id as any);
+  const lesson = await LessonService.getLessonById(id as any);
   res.json(lesson);
 });
 
 export const updateLesson = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  const lesson = await LessonService.updateLesson(id, req.body);
+  const id = getParam(req.params.id as any);
+  const lesson = await LessonService.updateLesson(id as any, req.body);
   res.json(lesson);
 });
 
 export const deleteLesson = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id);
-  await LessonService.deleteLesson(id);
+  const id = getParam(req.params.id as any);
+  await LessonService.deleteLesson(id as any);
   res.json({ message: "Lesson berhasil dihapus" });
 });

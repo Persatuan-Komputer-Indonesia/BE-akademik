@@ -17,7 +17,7 @@ export class OTPController {
       throw new AppError("User tidak ditemukan", 404);
     }
 
-    await OTPService.send(user.id, user.email, user.username);
+    await OTPService.sendRegisterOTP(user.id, user.email, user.username);
 
     res.json({ message: "OTP berhasil dikirim ke email" });
   });
@@ -34,7 +34,7 @@ export class OTPController {
       throw new AppError("User tidak ditemukan", 404);
     }
 
-    await OTPService.verify(user.id, otp);
+    await OTPService.verifyRegisterOTP(user.id, otp);
 
     res.json({ message: "OTP valid" });
   });

@@ -6,6 +6,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import userRoutes from "./routes/user.route";
 import otpRoutes from "./routes/otp.route";
 import registerRoutes from "./routes/register.route";
+import lessonRoutes from "./routes/lesson.route";
 
 const app: Application = express();
 
@@ -26,6 +27,7 @@ app.get('/', (_req: Request, res: Response) => {
 app.use('/otp', otpRoutes);
 app.use('/register', registerRoutes);
 app.use('/users', userRoutes);
+app.use('/lessons', lessonRoutes);
 
 
 app.use(errorHandler);
