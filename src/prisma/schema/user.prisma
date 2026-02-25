@@ -9,4 +9,6 @@ model User {
   profile    Profile?
   otps       Otp[]
   deletedAt  DateTime?
+
+  @@index([deletedAt])
 }

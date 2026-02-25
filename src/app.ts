@@ -8,6 +8,7 @@ import otpRoutes from "./routes/otp.route";
 import registerRoutes from "./routes/register.route";
 import lessonRoutes from "./routes/lesson.route";
 import forgotPassRoutes from "./routes/forgotPass.route";
+import dashboardRoutes from "./routes/dashboard.route";
 
 const app: Application = express();
 
@@ -30,6 +31,7 @@ app.use('/register', registerRoutes);
 app.use('/users', userRoutes);
 app.use('/lessons', lessonRoutes);
 app.use(forgotPassRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 
 app.use(errorHandler);

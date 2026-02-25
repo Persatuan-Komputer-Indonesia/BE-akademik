@@ -7,4 +7,6 @@ model Jurusan {
   lessons  Lesson[]
 
   deletedAt DateTime?
+
+  @@index([deletedAt])
 }

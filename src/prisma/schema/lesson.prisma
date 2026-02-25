@@ -7,4 +7,6 @@ model Lesson {
 
   jurusan Jurusan @relation(fields: [jurusan_id], references: [id])
   deletedAt DateTime?
+
+  @@index([deletedAt])
 }
