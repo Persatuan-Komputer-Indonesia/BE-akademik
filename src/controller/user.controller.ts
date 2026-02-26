@@ -62,8 +62,29 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const id = getParam(req.params.id);
-    await UserService.delete(id);
+    await UserService.delete(id); 
     res.json({ message: "User berhasil dihapus bre!" });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+
+// LOGIN User
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email & password wajib bre!" });
+    }
+
+    const user = await UserService.login(email, password);
+
+    res.json({
+      message: "Login sukses bre!",
+      user,
+    });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
