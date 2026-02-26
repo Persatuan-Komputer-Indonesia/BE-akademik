@@ -37,11 +37,17 @@ async update(
 },
 
 // DELETE
-async delete(id: string) {
-  const jurusan = await JurusanRepository.findById(id);
-  if (!jurusan) {
-    throw new Error("Jurusan tidak ditemukan bre!");
-  }
-  return JurusanRepository.delete(id);
-}
+ async delete(id: string) {
+    const jurusan = await JurusanRepository.findById(id);
+    if (!jurusan) throw new Error("Jurusan tidak ditemukan bre!");
+    return JurusanRepository.softDelete(id);
+  },
+
+  // 🔄 restore jurusan
+  async restore(id: string) {
+    const jurusan = await JurusanRepository.restore(id);
+    if(!jurusan) throw new Error("Jurusan tidak di temukan!!");
+    return jurusan
+  },
 };
+

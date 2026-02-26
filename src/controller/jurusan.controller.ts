@@ -63,3 +63,15 @@ export const deleteJurusan = async (req: Request, res: Response) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// controller/jurusan.controller.ts
+
+export const restoreJurusan = async (req: Request, res: Response) => {
+  try {
+    const id = getParam(req.params.id);
+    await JurusanService.restore(id);
+    res.json({ message: "Jurusan berhasil di-restore bre!" });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};

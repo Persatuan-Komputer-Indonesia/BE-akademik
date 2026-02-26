@@ -32,12 +32,20 @@ export const JurusanRepository = {
     });
   },
 
-  delete(id: string) {
+  // 🔥 soft delete sekarang
+  softDelete(id: string) {
     return prisma.jurusan.update({
       where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
+      data: { deletedAt: new Date() },
+    });
+  },
+
+  // 🔄 restore jurusan yang di-soft delete
+  restore(id: string) {
+    return prisma.jurusan.update({
+      where: { id },
+      data: { deletedAt: null },
     });
   },
 };
+
