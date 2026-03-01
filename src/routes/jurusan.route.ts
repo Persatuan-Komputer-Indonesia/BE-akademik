@@ -4,15 +4,17 @@ import {
     getAllJurusan,
     getJurusanById,
     updateJurusan,
-    deleteJurusan
+    deleteJurusan,
+    restoreJurusan
 } from "../controller/jurusan.controller"
 
 const router = Router();
 
-router.post("/", createJurusan)
-router.get("/", getAllJurusan)
-router.get("/:id", getJurusanById)
-router.put("/:id", updateJurusan)
-router.delete("/:id", deleteJurusan)
+router.post("/", createJurusan);              // create jurusan
+router.get("/", getAllJurusan);               // get all jurusan
+router.get("/:id", getJurusanById);           // get jurusan by ID
+router.put("/:id", updateJurusan);            // update jurusan
+router.put("/restore/:id", restoreJurusan);   // restore jurusan yang di soft delete
+router.delete("/:id", deleteJurusan);         // soft delete jurusan 
 
 export default router;

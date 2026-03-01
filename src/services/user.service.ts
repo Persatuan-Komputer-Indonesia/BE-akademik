@@ -66,4 +66,15 @@ export const UserService = {
     if (!user) throw new Error("User tidak ditemukan bre!");
     return UserRepository.delete(id);
   },
+
+  // LOGIN
+async login(email: string, password: string) {
+  const user = await UserRepository.findByEmail(email);
+  if (!user) throw new Error("Email ga terdaftar bre!");
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new Error("Password salah bre!");
+
+  return user;
+}
 };

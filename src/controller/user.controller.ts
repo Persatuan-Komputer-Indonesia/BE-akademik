@@ -38,8 +38,34 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   res.json(user);
 });
 
-export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id as any);
-  await UserService.delete(id as any);
-  res.json({ message: "User berhasil dihapus" });
-});
+// DELETE User
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const id = getParam(req.params.id as any);
+    await UserService.delete(id as any); 
+    res.json({ message: "User berhasil dihapus bre!" });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+
+// LOGIN User
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email & password wajib bre!" });
+    }
+
+    const user = await UserService.login(email, password);
+
+    res.json({
+      message: "Login sukses bre!",
+      user,
+    });
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+};
