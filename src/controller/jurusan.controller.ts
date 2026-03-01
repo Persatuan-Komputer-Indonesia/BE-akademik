@@ -30,8 +30,8 @@ export const getAllJurusan = async (_: Request, res: Response) => {
 // GET JURUSAN BY ID
 export const getJurusanById = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    const jurusan = await JurusanService.findById(id);
+    const id = getParam(req.params.id!);
+    const jurusan = await JurusanService.findById(id!);
     if (!jurusan) return res.status(404).json({ message: "Jurusan tidak ditemukan" });
 
     res.json(jurusan);
@@ -43,9 +43,9 @@ export const getJurusanById = async (req: Request, res: Response) => {
 // UPDATE JURUSAN
 export const updateJurusan = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
+    const id = getParam(req.params.id!);
     const { nama_jurusan, deskripsi } = req.body;
-    const jurusan = await JurusanService.update(id, { nama_jurusan, deskripsi });
+    const jurusan = await JurusanService.update(id!, { nama_jurusan, deskripsi });
 
     res.json(jurusan);
   } catch (err: any) {
@@ -56,8 +56,8 @@ export const updateJurusan = async (req: Request, res: Response) => {
 // DELETE JURUSAN
 export const deleteJurusan = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    await JurusanService.delete(id);
+    const id = getParam(req.params.id!);
+    await JurusanService.delete(id!);
     res.json({ message: "Jurusan berhasil dihapus" });
   } catch (err: any) {
     res.status(500).json({ message: err.message });
