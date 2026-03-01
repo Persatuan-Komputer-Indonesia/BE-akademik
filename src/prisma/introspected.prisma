@@ -1,0 +1,20 @@
+model Otp {
+  id         Int      @id @default(autoincrement())
+  email      String
+  code       String   @db.VarChar(6)
+  type       OtpType
+  payload    Json?
+  expired_at DateTime @db.Timestamp(6)
+  created_at DateTime @default(now())
+  user_id    String?
+  User       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([user_id])
+}
+
+enum OtpType {
+  REGISTER
+  FORGOT_PASSWORD
+  LOGIN
+}

@@ -1,40 +1,65 @@
 import { Request, Response } from "express";
 import { JurusanService } from "../services/jurusan.service";
-import { asyncHandler } from "../utils/asyncHandler";
-import { AppError } from "../utils/errors";
 
-const getParam = (param: string | string[]) =>
-  Array.isArray(param) ? param[0] : param;
+// helper ambil param aman
+const getParam = (param: string | string[]) => Array.isArray(param) ? param[0] : param;
 
-export const createJurusan = asyncHandler(async (req: Request, res: Response) => {
-  const { nama_jurusan, deskripsi } = req.body;
-  if (!nama_jurusan) throw new AppError("nama_jurusan wajib diisi", 400);
+// CREATE JURUSAN
+export const createJurusan = async (req: Request, res: Response) => {
+  try {
+    const { nama_jurusan, deskripsi } = req.body;
+    if (!nama_jurusan) return res.status(400).json({ message: "nama_jurusan wajib diisi" });
 
-  const jurusan = await JurusanService.create({ nama_jurusan, deskripsi });
-  res.status(201).json(jurusan);
-});
+    const jurusan = await JurusanService.create({ nama_jurusan, deskripsi });
+    res.status(201).json(jurusan);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-export const getAllJurusan = asyncHandler(async (_: Request, res: Response) => {
-  const jurusan = await JurusanService.findAll();
-  res.json(jurusan);
-});
+// GET ALL JURUSAN
+export const getAllJurusan = async (_: Request, res: Response) => {
+  try {
+    const jurusan = await JurusanService.findAll();
+    res.json(jurusan);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-export const getJurusanById = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id as any);
-  const jurusan = await JurusanService.findById(id as any);
-  if (!jurusan) throw new AppError("Jurusan tidak ditemukan", 404);
+// GET JURUSAN BY ID
+export const getJurusanById = async (req: Request, res: Response) => {
+  try {
+    const id = getParam(req.params.id!);
+    const jurusan = await JurusanService.findById(id!);
+    if (!jurusan) return res.status(404).json({ message: "Jurusan tidak ditemukan" });
 
-  res.json(jurusan);
-});
+    res.json(jurusan);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
-export const updateJurusan = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id as any);
-  const jurusan = await JurusanService.update(id as any, req.body);
-  res.json(jurusan);
-});
+// UPDATE JURUSAN
+export const updateJurusan = async (req: Request, res: Response) => {
+  try {
+    const id = getParam(req.params.id!);
+    const { nama_jurusan, deskripsi } = req.body;
+    const jurusan = await JurusanService.update(id!, { nama_jurusan, deskripsi });
 
-export const deleteJurusan = asyncHandler(async (req: Request, res: Response) => {
-  const id = getParam(req.params.id as any);
-  await JurusanService.delete(id as any);
-  res.json({ message: "Jurusan berhasil dihapus" });
-});
+    res.json(jurusan);
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// DELETE JURUSAN
+export const deleteJurusan = async (req: Request, res: Response) => {
+  try {
+    const id = getParam(req.params.id!);
+    await JurusanService.delete(id!);
+    res.json({ message: "Jurusan berhasil dihapus" });
+  } catch (err: any) {
+    res.status(500).json({ message: err.message });
+  }
+};
