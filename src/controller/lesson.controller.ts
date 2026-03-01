@@ -26,8 +26,8 @@ export const getAllLessons = async (_: Request, res: Response) => {
 // GET BY ID
 export const getLessonById = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    const lesson = await LessonService.getLessonById(id);
+    const id = getParam(req.params.id!);
+    const lesson = await LessonService.getLessonById(id!);
     res.json(lesson);
   } catch (err: any) {
     res.status(404).json({ message: err.message });
@@ -37,8 +37,8 @@ export const getLessonById = async (req: Request, res: Response) => {
 // UPDATE
 export const updateLesson = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    const lesson = await LessonService.updateLesson(id, req.body);
+    const id = getParam(req.params.id!);
+    const lesson = await LessonService.updateLesson(id!, req.body);
     res.json(lesson);
   } catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -48,9 +48,9 @@ export const updateLesson = async (req: Request, res: Response) => {
 // DELETE
 export const deleteLesson = async (req: Request, res: Response) => {
   try {
-    const id = getParam(req.params.id);
-    await LessonService.deleteLesson(id);
-    res.json({ message: "Lesson berhasil dihapus" });
+    const id = getParam(req.params.id!);
+    await LessonService.deleteLesson(id!);
+    res.json({ message: "Lesson berhasil dihapus"});
   } catch (err: any) {
     res.status(500).json({ message: err.message });
   }
