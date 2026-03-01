@@ -15,9 +15,8 @@ if (missingVars.length) {
 }
 
 export const config = {
-    // Bind to all interfaces by default so devices on the same network can reach the server
     HOST: process.env.HOST || '0.0.0.0',
-    PORT: Number(process.env.PORT) || 5000, // Diubah ke Number agar tidak error di app.listen
+    PORT: Number(process.env.PORT) || 5000, 
     NODE_ENV: process.env.NODE_ENV || 'development',
     DATABASE_URL: process.env.DATABASE_URL,
     JWT_SECRET: process.env.JWT_SECRET || "123456",
