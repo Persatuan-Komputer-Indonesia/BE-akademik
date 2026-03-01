@@ -1,70 +1,45 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../utils/errors";
 
-const getParam = (param: string | string[]) => Array.isArray(param) ? param[0] : param;
+const getParam = (param: string | string[]) =>
+  Array.isArray(param) ? param[0] : param;
 
-// CREATE User
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    const user = await UserService.create(req.body);
-    res.status(201).json(user);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+export const createUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await UserService.create(req.body);
+  res.status(201).json(user);
+});
 
-// GET All Users
-export const getAllUsers = async (_req: Request, res: Response) => {
-  try {
-    const users = await UserService.findAll();
-    res.json(users);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+export const getAllUsers = asyncHandler(async (_req: Request, res: Response) => {
+  const users = await UserService.findAll();
+  res.json(users);
+});
 
-// GET User by ID
-export const getUserById = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    const user = await UserService.findById(id);
-    if (!user) return res.status(404).json({ message: "User ga ketemu bre!" });
-    res.json(user);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+export const getUserById = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id as any);
+  const user = await UserService.findById(id as any);
+  if (!user) throw new AppError("User tidak ditemukan", 404);
 
-// GET User by Email
-export const getUserByEmail = async (req: Request, res: Response) => {
-  try {
-    const email = getParam(req.params.email);
-    const user = await UserService.findByEmail(email);
-    if (!user) return res.status(404).json({ message: "User ga ketemu bre!" });
-    res.json(user);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+  res.json(user);
+});
 
-// UPDATE User
-export const updateUser = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    const user = await UserService.update(id, req.body);
-    res.json(user);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+export const getUserByEmail = asyncHandler(async (req: Request, res: Response) => {
+  const email = getParam(req.params.email as any);
+  const user = await UserService.findByEmail(email as any);
+  if (!user) throw new AppError("User tidak ditemukan", 404);
 
-// DELETE User
-export const deleteUser = async (req: Request, res: Response) => {
-  try {
-    const id = getParam(req.params.id);
-    await UserService.delete(id);
-    res.json({ message: "User berhasil dihapus bre!" });
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+  res.json(user);
+});
+
+export const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id as any);
+  const user = await UserService.update(id as any, req.body);
+  res.json(user);
+});
+
+export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+  const id = getParam(req.params.id as any);
+  await UserService.delete(id as any);
+  res.json({ message: "User berhasil dihapus" });
+});

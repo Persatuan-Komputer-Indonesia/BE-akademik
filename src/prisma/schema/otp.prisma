@@ -1,11 +1,21 @@
-model OTP {
-  id        String   @id @default(uuid())
-  otp       String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
+model Otp {
+  id         Int      @id @default(autoincrement())
+  email      String
+  code       String   @db.VarChar(6)
+  type       OtpType
+  payload    Json?
+  expired_at DateTime @db.Timestamp
+  created_at DateTime @default(now())
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user_id    String?
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
-  @@index([userId])
+  @@index([email])
+  @@index([user_id])
+}
+
+enum OtpType {
+  REGISTER
+  FORGOT_PASSWORD
+  LOGIN
 }

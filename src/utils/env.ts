@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import "dotenv/config";
 dotenv.config();
 
 // Validate essential env vars and guide developer when missing

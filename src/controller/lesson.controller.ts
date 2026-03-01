@@ -1,27 +1,19 @@
 import { Request, Response } from "express";
 import { LessonService } from "../services/lesson.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
-const getParam = (param: string | string[]) => Array.isArray(param) ? param[0] : param;
+const getParam = (param: string | string[]) =>
+  Array.isArray(param) ? param[0] : param;
 
-// CREATE
-export const createLesson = async (req: Request, res: Response) => {
-  try {
-    const lesson = await LessonService.createLesson(req.body);
-    res.status(201).json(lesson);
-  } catch (err: any) {
-    res.status(400).json({ message: err.message });
-  }
-};
+export const createLesson = asyncHandler(async (req: Request, res: Response) => {
+  const lesson = await LessonService.createLesson(req.body);
+  res.status(201).json(lesson);
+});
 
-// GET ALL
-export const getAllLessons = async (_: Request, res: Response) => {
-  try {
-    const lessons = await LessonService.getAllLessons();
-    res.json(lessons);
-  } catch (err: any) {
-    res.status(500).json({ message: err.message });
-  }
-};
+export const getAllLessons = asyncHandler(async (_: Request, res: Response) => {
+  const lessons = await LessonService.getAllLessons();
+  res.json(lessons);
+});
 
 // GET BY ID
 export const getLessonById = async (req: Request, res: Response) => {

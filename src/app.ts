@@ -34,4 +34,12 @@ app.get('/', (_req: Request, res: Response) => {
     });
 });
 
+app.use('/otp', otpRoutes);
+app.use('/register', registerRoutes);
+app.use('/users', userRoutes);
+app.use('/lessons', lessonRoutes);
+app.use(forgotPassRoutes);
+
+
+app.use(errorHandler);
 export default app;
