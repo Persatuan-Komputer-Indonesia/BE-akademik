@@ -1,34 +1,27 @@
-// 1. WAJIB DI PALING ATAS: Paksa baca file .env sebelum yang lain jalan
-import 'dotenv/config'; 
+//src/prisma.ts
+import { PrismaClient } from "./generated/prisma";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from './generated/prisma';
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 
-// 2. Ambil URL dari environment
-const connectionString = process.env.DATABASE_URL;
-
-// Debugging: Biar kita yakin URL-nya nggak undefined lagi
-console.log("🔌 URL DB yang dibaca:", connectionString ? "BERHASIL KEBACA" : "KOSONG/UNDEFINED!");
-
-// Cegah aplikasi jalan kalau URL-nya kosong
-if (!connectionString) {
-    throw new Error("DATABASE_URL tidak ditemukan! Cek file .env kamu.");
-}
-
-// 3. Setup Pool dengan SSL (Wajib untuk db.prisma.io)
-const pool = new Pool({ 
-    connectionString,
-    ssl: {
-        rejectUnauthorized: false
-    }
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL
 });
 
 const adapter = new PrismaPg(pool);
 
-const prisma = new PrismaClient({ 
-    adapter, 
-    log: ['query', 'info', 'warn', 'error'] 
-});
+const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    adapter,
+    log: ["error", "warn"]
+  });
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
 
 export default prisma;

@@ -8,4 +8,5 @@ model User {
   deletedAt  DateTime?
   Otp        Otp[]
   profile    Profile?
+  otps       OTP[]
 }
