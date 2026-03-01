@@ -12,15 +12,29 @@ export const UserRepository = {
   },
 
   // GET ALL (HANYA USER AKTIF)
-  findAll() {
-    return prisma.user.findMany({
-      where: {
-        deletedAt: null,
-      },
-      include: {
-        profile: true,
-      },
-    });
+  findAll(page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    return prisma.$transaction([
+      prisma.user.findMany({
+        where: {
+          deletedAt: null,
+        },
+        include: {
+          profile: true,
+        },
+        skip,
+        take: limit,
+        orderBy: {
+          created_at: "desc",
+        },
+      }),
+      prisma.user.count({
+        where: {
+          deletedAt: null,
+        },
+      }),
+    ]);
   },
 
   // GET BY ID (HANYA USER AKTIF)

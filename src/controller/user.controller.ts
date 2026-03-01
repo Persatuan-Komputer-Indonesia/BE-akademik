@@ -11,8 +11,11 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json(user);
 });
 
-export const getAllUsers = asyncHandler(async (_req: Request, res: Response) => {
-  const users = await UserService.findAll();
+export const getAllUsers = asyncHandler(async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
+
+  const users = await UserService.findAll(page, limit);
   res.json(users);
 });
 

@@ -22,10 +22,19 @@ export const UserService = {
   },
 
   // GET ALL
-  findAll() {
-    return UserRepository.findAll();
+  async findAll(page: number = 1, limit: number = 10) {
+    const [users, total] = await UserRepository.findAll(page, limit);
+  
+    return {
+      data: users,
+      meta: {
+        total,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        limit,
+      },
+    };
   },
-
   // GET BY ID
   async findById(id: string) {
     const user = await UserRepository.findById(id);
