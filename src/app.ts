@@ -39,6 +39,7 @@ app.use('/register', registerRoutes);
 app.use('/users', userRoutes);
 app.use('/lessons', lessonRoutes);
 app.use(forgotPassRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 
 app.use(errorHandler);
