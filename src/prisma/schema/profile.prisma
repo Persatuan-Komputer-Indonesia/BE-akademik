@@ -1,11 +1,11 @@
 model Profile {
-  id           String   @id @default(uuid())
-  user_id      String   @unique
+  id            String    @id @default(uuid())
+  user_id       String    @unique
   tanggal_lahir DateTime
-  no_hp        String
-  jurusan_id   String
-  profile      String?
-
-  user     User    @relation(fields: [user_id], references: [id])
-  jurusan  Jurusan @relation(fields: [jurusan_id], references: [id])
+  no_hp         String
+  jurusan_id    String
+  profile       String?
+  deletedAt     DateTime?
+  jurusan       Jurusan   @relation(fields: [jurusan_id], references: [id])
+  user          User      @relation(fields: [user_id], references: [id])
 }

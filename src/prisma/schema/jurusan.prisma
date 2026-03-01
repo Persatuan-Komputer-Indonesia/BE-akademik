@@ -1,8 +1,8 @@
 model Jurusan {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   nama_jurusan String
   deskripsi    String?
-
-  profiles Profile[]
-  lessons  Lesson[]
+  deletedAt    DateTime?
+  lessons      Lesson[]
+  profiles     Profile[]
 }
